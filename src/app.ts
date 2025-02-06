@@ -3,8 +3,33 @@ import { userRoutes } from './modules/user/user.route'
 import { userSchemas } from './modules/user/user.schema'
 import fjwt, { FastifyJWT } from '@fastify/jwt'
 import fCookie from '@fastify/cookie'
+import fSwagger from '@fastify/swagger'
+import fSwaggerUI from '@fastify/swagger-ui'
 
-const app = Fastify({ logger: true }) // you can disable logging
+const app = Fastify({ logger: true })
+
+app.register(fSwagger)
+
+app.register(fSwaggerUI, {
+  routePrefix: '/documentation',
+  uiConfig: {
+    deepLinking: false,
+  },
+  uiHooks: {
+    onRequest: function (request, reply, next) {
+      next()
+    },
+    preHandler: function (request, reply, next) {
+      next()
+    },
+  },
+  staticCSP: true,
+  transformStaticCSP: (header) => header,
+  transformSpecification: (swaggerObject, request, reply) => {
+    return swaggerObject
+  },
+  transformSpecificationClone: true,
+})
 
 // jwt
 app.register(fjwt, { secret: 'supersecretcode-CHANGE_THIS-USE_ENV_FILE' })
@@ -44,7 +69,8 @@ listeners.forEach((signal) => {
   })
 })
 
-app.register(userRoutes, { prefix: 'api/users' })
+app.register(userRoutes, { prefix: 'api/Account' })
+
 for (let schema of [...userSchemas]) {
   app.addSchema(schema)
 }
