@@ -19,3 +19,13 @@ model User {
   name     String?
   password String
 }
+
+model Transaction {
+  id           String   @id @default(cuid())
+  userId       String
+  timestamp    DateTime @default(now())
+  mcc          Int
+  amount       Decimal
+  currencyCode Int
+  comment      String?
+}

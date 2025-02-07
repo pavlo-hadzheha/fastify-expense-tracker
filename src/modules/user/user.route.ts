@@ -2,17 +2,22 @@ import { FastifyInstance, FastifyRequest, FastifyReply, RouteShorthandOptions } 
 import { $ref } from './user.schema'
 import { createUser, getUsers, login, logout } from './user.controller'
 
-export async function userRoutes(app: FastifyInstance) {
+export function userRoutes(_server: FastifyInstance) {
   //add prehandler to the root route
-  app.get(
+  _server.get(
     '/',
     {
-      preHandler: app.authenticate,
+      schema: {
+        response: {
+          200: $ref('getUsersSchema'),
+        },
+      },
+      // preHandler: _server.authenticate,
     },
     getUsers
   )
 
-  app.post(
+  _server.post(
     '/register',
     {
       schema: {
@@ -25,7 +30,7 @@ export async function userRoutes(app: FastifyInstance) {
     createUser
   )
 
-  app.post(
+  _server.post(
     '/login',
     {
       schema: {
@@ -38,7 +43,7 @@ export async function userRoutes(app: FastifyInstance) {
     login
   )
 
-  app.delete('/logout', { preHandler: [app.authenticate] }, logout)
+  _server.delete('/logout', { preHandler: [_server.authenticate] }, logout)
 
-  app.log.info('user routes registered')
+  _server.log.info('user routes registered')
 }
