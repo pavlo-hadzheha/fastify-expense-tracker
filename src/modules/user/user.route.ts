@@ -10,9 +10,9 @@ import { createUser, getUsers, login, logout } from './user.controller'
 import { ZodTypeProvider } from 'fastify-type-provider-zod'
 
 export function userRoutes(_server: FastifyInstance) {
-  const server = _server.withTypeProvider<ZodTypeProvider>()
+  // const _server = _server.withTypeProvider<ZodTypeProvider>()
 
-  server.get(
+  _server.get(
     '/',
     {
       schema: {
@@ -24,20 +24,19 @@ export function userRoutes(_server: FastifyInstance) {
     getUsers
   )
 
-  server.post(
-    '/register',
-    {
-      schema: {
-        body: createUserSchema,
-        response: {
-          201: createUserResponseSchema,
-        },
+  _server.route({
+    url: '/register',
+    method: 'POST',
+    schema: {
+      body: createUserSchema,
+      response: {
+        201: createUserResponseSchema,
       },
     },
-    createUser
-  )
+    handler: createUser,
+  })
 
-  server.post(
+  _server.post(
     '/login',
     {
       schema: {
@@ -50,7 +49,7 @@ export function userRoutes(_server: FastifyInstance) {
     login
   )
 
-  server.delete('/logout', { preHandler: [server.authenticate] }, logout)
+  _server.delete('/logout', { preHandler: [_server.authenticate] }, logout)
 
-  server.log.info('user routes registered')
+  _server.log.info('user routes registered')
 }

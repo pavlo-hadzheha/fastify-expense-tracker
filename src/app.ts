@@ -7,8 +7,12 @@ import fSwagger from '@fastify/swagger'
 import fSwaggerUI from '@fastify/swagger-ui'
 import autoTaggingPlugin from './plugins/auto-tagging.plugin'
 import { transactionRoutes } from './modules/transaction/transaction.route'
+import { serializerCompiler, validatorCompiler } from 'fastify-type-provider-zod'
 
 const app = Fastify({ logger: true })
+
+app.setValidatorCompiler(validatorCompiler)
+app.setSerializerCompiler(serializerCompiler)
 
 app.register(fSwagger, {
   openapi: {

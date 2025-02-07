@@ -16,17 +16,16 @@ export function transactionRoutes(_server: FastifyInstance) {
 
   server.addHook('preHandler', server.authenticate)
 
-  server.get(
-    '/',
-    {
-      schema: {
-        response: {
-          200: getTransactionsResponseSchema,
-        },
+  server.route({
+    url: '/',
+    method: 'GET',
+    schema: {
+      response: {
+        200: getTransactionsResponseSchema,
       },
     },
-    getTransactions
-  )
+    handler: getTransactions,
+  })
 
   server.get(
     '/:id',
