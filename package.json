@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "tsx watch src/app.ts",
     "build": "tsc -p tsconfig.json",
-    "start": "node dist/app.js"
+    "start": "node dist/app.js",
+    "studio": "npx prisma@6.3.1 studio"
   },
   "keywords": [],
   "author": "",
