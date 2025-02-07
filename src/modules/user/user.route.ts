@@ -1,49 +1,56 @@
-import { FastifyInstance, FastifyRequest, FastifyReply, RouteShorthandOptions } from 'fastify'
-import { $ref } from './user.schema'
+import { FastifyInstance } from 'fastify'
+import {
+  createUserResponseSchema,
+  createUserSchema,
+  getUsersSchema,
+  loginResponseSchema,
+  loginSchema,
+} from './user.schema'
 import { createUser, getUsers, login, logout } from './user.controller'
+import { ZodTypeProvider } from 'fastify-type-provider-zod'
 
 export function userRoutes(_server: FastifyInstance) {
-  //add prehandler to the root route
-  _server.get(
+  const server = _server.withTypeProvider<ZodTypeProvider>()
+
+  server.get(
     '/',
     {
       schema: {
         response: {
-          200: $ref('getUsersSchema'),
+          200: getUsersSchema,
         },
       },
-      // preHandler: _server.authenticate,
     },
     getUsers
   )
 
-  _server.post(
+  server.post(
     '/register',
     {
       schema: {
-        body: $ref('createUserSchema'),
+        body: createUserSchema,
         response: {
-          201: $ref('createUserResponseSchema'),
+          201: createUserResponseSchema,
         },
       },
     },
     createUser
   )
 
-  _server.post(
+  server.post(
     '/login',
     {
       schema: {
-        body: $ref('loginSchema'),
+        body: loginSchema,
         response: {
-          201: $ref('loginResponseSchema'),
+          201: loginResponseSchema,
         },
       },
     },
     login
   )
 
-  _server.delete('/logout', { preHandler: [_server.authenticate] }, logout)
+  server.delete('/logout', { preHandler: [server.authenticate] }, logout)
 
-  _server.log.info('user routes registered')
+  server.log.info('user routes registered')
 }

@@ -23,4 +23,7 @@ const plugin: FastifyPluginAsync = async function (fastify) {
   })
 }
 
-export default fp(plugin, '5.x')
+export default fp(plugin, {
+  fastify: '5.x',
+  name: 'autotag-routes-plugin',
+})

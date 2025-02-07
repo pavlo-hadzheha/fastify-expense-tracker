@@ -1,6 +1,5 @@
 import Fastify, { FastifyReply, FastifyRequest } from 'fastify'
 import { userRoutes } from './modules/user/user.route'
-import { userSchemas } from './modules/user/user.schema'
 import fjwt, { FastifyJWT } from '@fastify/jwt'
 import fCookie from '@fastify/cookie'
 import fCors from '@fastify/cors'
@@ -8,8 +7,6 @@ import fSwagger from '@fastify/swagger'
 import fSwaggerUI from '@fastify/swagger-ui'
 import autoTaggingPlugin from './plugins/auto-tagging.plugin'
 import { transactionRoutes } from './modules/transaction/transaction.route'
-import { transactionSchemas } from './modules/transaction/transaction.schema'
-import { generalSchemas } from './types/ProblemDetailsSchema'
 
 const app = Fastify({ logger: true })
 
@@ -21,17 +18,6 @@ app.register(fSwagger, {
       description: 'Save your transactions in remote DB',
       version: '1.0.0',
     },
-    // security: [{ cookieAuth: [] }],
-    // components: {
-    //   securitySchemes: {
-    //     cookieAuth: {
-    //       description: 'Cookie header token, sample: "access_token={TOKEN}"',
-    //       type: 'apiKey',
-    //       name: 'access_token',
-    //       in: 'cookie',
-    //     },
-    //   },
-    // },
   },
 })
 
@@ -75,13 +61,9 @@ listeners.forEach((signal) => {
   })
 })
 
+// ROUTES
 app.register(userRoutes, { prefix: 'api/Account' })
-userSchemas.forEach((schema) => app.addSchema(schema))
-
 app.register(transactionRoutes, { prefix: 'api/Transaction' })
-transactionSchemas.forEach((schema) => app.addSchema(schema))
-
-generalSchemas.forEach((schema) => app.addSchema(schema))
 
 async function main() {
   await app.listen({

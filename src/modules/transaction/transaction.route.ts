@@ -1,61 +1,73 @@
 import { FastifyInstance } from 'fastify'
-import { $ref } from './transaction.schema'
+import {
+  createTransactionSchema,
+  deleteTransactionResponseSchema,
+  deleteTransactionSchema,
+  getTransactionResponseSchema,
+  getTransactionSchema,
+  getTransactionsResponseSchema,
+} from './transaction.schema'
 import { createTransaction, deleteTransaction, getTransaction, getTransactions } from './transaction.controller'
-import { $generalSchemasRef } from '../../types/ProblemDetailsSchema'
+import { problemDetailsSchema } from '../../types/ProblemDetailsSchema'
+import { ZodTypeProvider } from 'fastify-type-provider-zod'
 
 export function transactionRoutes(_server: FastifyInstance) {
-  _server.addHook('preHandler', _server.authenticate)
+  const server = _server.withTypeProvider<ZodTypeProvider>()
 
-  _server.get(
+  server.addHook('preHandler', server.authenticate)
+
+  server.get(
     '/',
     {
       schema: {
         response: {
-          200: $ref('getTransactionsResponseSchema'),
+          200: getTransactionsResponseSchema,
         },
       },
     },
     getTransactions
   )
 
-  _server.get(
+  server.get(
     '/:id',
     {
       schema: {
-        params: $ref('getTransactionSchema'),
+        params: getTransactionSchema,
         response: {
-          200: $ref('getTransactionResponseSchema'),
-          404: $generalSchemasRef('problemDetailsSchema'),
+          200: getTransactionResponseSchema,
+          404: problemDetailsSchema,
         },
       },
     },
     getTransaction
   )
 
-  _server.post(
+  server.post(
     '/',
     {
       schema: {
-        body: $ref('createTransactionSchema'),
+        body: createTransactionSchema,
         response: {
-          201: $ref('getTransactionResponseSchema'),
+          201: getTransactionResponseSchema,
         },
       },
     },
     createTransaction
   )
 
-  _server.delete(
+  server.delete(
     '/:id',
     {
       schema: {
-        params: $ref('deleteTransactionSchema'),
+        params: deleteTransactionSchema,
         response: {
-          200: $ref('deleteTransactionResponseSchema'),
-          404: $generalSchemasRef('problemDetailsSchema'),
+          200: deleteTransactionResponseSchema,
+          404: problemDetailsSchema,
         },
       },
     },
     deleteTransaction
   )
+
+  _server.log.info('transaction routes registered')
 }
