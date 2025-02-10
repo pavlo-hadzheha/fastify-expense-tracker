@@ -6,7 +6,7 @@ export class ProblemDetails extends Error {
   }
 }
 
-export const problemDetailsSchema = z.object({
+export const ProblemDetailsSchema = z.object({
   statusCode: z.number(),
   message: z.string(),
 })

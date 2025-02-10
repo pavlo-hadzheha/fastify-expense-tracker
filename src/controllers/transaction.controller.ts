@@ -1,7 +1,10 @@
 import { FastifyReply, FastifyRequest } from 'fastify'
-import prisma from '../../utils/prisma'
-import { CreateTransactionInput, DeleteTransactionInput, GetTransactionParams } from './transaction.schema'
-import { ProblemDetails } from '../../types/ProblemDetailsSchema'
+import { ProblemDetails } from '../types/ProblemDetailsSchema'
+import prisma from '../utils/prisma'
+import z from 'zod'
+import { GetTransactionReqSchema } from '../routes/Transaction/schemas/GetTransactionReqSchema'
+import { CreateTransactionReqSchema } from '../routes/Transaction/schemas/CreateTransactionReqSchema'
+import { DeleteTransactionReqSchema } from '../routes/Transaction/schemas/DeleteTrasactionReqSchema'
 
 export async function getTransactions(req: FastifyRequest, reply: FastifyReply) {
   const transactions = await prisma.transaction.findMany({
@@ -18,7 +21,7 @@ export async function getTransactions(req: FastifyRequest, reply: FastifyReply) 
 
 export async function getTransaction(
   req: FastifyRequest<{
-    Params: GetTransactionParams
+    Params: z.infer<typeof GetTransactionReqSchema>
   }>,
   reply: FastifyReply
 ) {
@@ -34,7 +37,7 @@ export async function getTransaction(
 
 export async function createTransaction(
   req: FastifyRequest<{
-    Body: CreateTransactionInput
+    Body: z.infer<typeof CreateTransactionReqSchema>
   }>,
   reply: FastifyReply
 ) {
@@ -49,7 +52,7 @@ export async function createTransaction(
 
 export async function deleteTransaction(
   req: FastifyRequest<{
-    Params: DeleteTransactionInput
+    Params: z.infer<typeof DeleteTransactionReqSchema>
   }>,
   reply: FastifyReply
 ) {

@@ -1,7 +1,9 @@
 import { FastifyReply, FastifyRequest } from 'fastify'
-import { CreateUserInput, LoginUserInput } from './user.schema'
 import bcrypt from 'bcrypt'
-import prisma from '../../utils/prisma'
+import prisma from '../utils/prisma'
+import z from 'zod'
+import { CreateAccountReqSchema } from '../routes/Account/schemas/CreateAccountReqSchema'
+import { LoginReqSchema } from '../routes/Account/schemas/LoginReqSchema'
 
 const SALT_ROUNDS = 10
 
@@ -18,7 +20,7 @@ export async function getUsers(req: FastifyRequest, reply: FastifyReply) {
 
 export async function createUser(
   req: FastifyRequest<{
-    Body: CreateUserInput
+    Body: z.infer<typeof CreateAccountReqSchema>
   }>,
   reply: FastifyReply
 ) {
@@ -50,7 +52,7 @@ export async function createUser(
 
 export async function login(
   req: FastifyRequest<{
-    Body: LoginUserInput
+    Body: z.infer<typeof LoginReqSchema>
   }>,
   reply: FastifyReply
 ) {

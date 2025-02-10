@@ -1,13 +1,13 @@
 import Fastify, { FastifyReply, FastifyRequest } from 'fastify'
-import { userRoutes } from './modules/user/user.route'
+import autoload from '@fastify/autoload';
 import fjwt, { FastifyJWT } from '@fastify/jwt'
 import fCookie from '@fastify/cookie'
 import fCors from '@fastify/cors'
 import fSwagger from '@fastify/swagger'
 import fSwaggerUI from '@fastify/swagger-ui'
 import autoTaggingPlugin from './plugins/auto-tagging.plugin'
-import { transactionRoutes } from './modules/transaction/transaction.route'
 import { jsonSchemaTransform, serializerCompiler, validatorCompiler } from 'fastify-type-provider-zod'
+import path from 'path';
 
 const app = Fastify({ logger: true })
 
@@ -65,9 +65,16 @@ listeners.forEach((signal) => {
   })
 })
 
-// ROUTES
-app.register(userRoutes, { prefix: 'api/Account' })
-app.register(transactionRoutes, { prefix: 'api/Transaction' })
+app.register(autoload, {
+  dir: path.join(__dirname, 'routes'),
+  ignoreFilter: 'schemas',
+  options: {
+    prefix: '/api'
+  },
+  autoHooks: true,
+  cascadeHooks: true,
+  routeParams: true
+});
 
 async function main() {
   await app.listen({
