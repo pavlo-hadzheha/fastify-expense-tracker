@@ -1,7 +1,7 @@
+import { AccountSchema } from '@/types/AccountSchema'
 import z from 'zod'
-import { AccountSchema } from '../../../types/AccountSchema'
 
 export const CreateAccountReqSchema = z.object({
-  ...AccountSchema.shape,
+  ...AccountSchema.omit({ id: true }).shape,
   password: z.string().min(6),
 })
