@@ -9,6 +9,9 @@ export async function getTransactions(req: FastifyRequest, reply: FastifyReply) 
       userId: req.user.id,
     },
   })
+  transactions.forEach((_t) => {
+    console.log({ type: _t.amount })
+  })
 
   return reply.code(200).send(transactions)
 }

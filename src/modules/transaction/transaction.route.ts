@@ -16,6 +16,12 @@ export function transactionRoutes(_server: FastifyInstance) {
 
   server.addHook('preHandler', server.authenticate)
 
+  server.addHook('onError', (request, reply, error, done) => {
+    // Some code
+    console.log({ error })
+    done()
+  })
+
   server.route({
     url: '/',
     method: 'GET',

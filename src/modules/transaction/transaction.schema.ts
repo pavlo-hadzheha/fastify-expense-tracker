@@ -16,7 +16,7 @@ export const getTransactionResponseSchema = z.object({
   userId: z.string(),
   timestamp: z.date(),
   mcc: z.number(),
-  amount: z.number(),
+  amount: z.number({ coerce: true }),
   currencyCode: z.number(),
   comment: z.string().optional(),
 })

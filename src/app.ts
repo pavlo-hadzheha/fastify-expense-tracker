@@ -7,12 +7,9 @@ import fSwagger from '@fastify/swagger'
 import fSwaggerUI from '@fastify/swagger-ui'
 import autoTaggingPlugin from './plugins/auto-tagging.plugin'
 import { transactionRoutes } from './modules/transaction/transaction.route'
-import { serializerCompiler, validatorCompiler } from 'fastify-type-provider-zod'
+import { jsonSchemaTransform, serializerCompiler, validatorCompiler } from 'fastify-type-provider-zod'
 
 const app = Fastify({ logger: true })
-
-app.setValidatorCompiler(validatorCompiler)
-app.setSerializerCompiler(serializerCompiler)
 
 app.register(fSwagger, {
   openapi: {
@@ -23,6 +20,7 @@ app.register(fSwagger, {
       version: '1.0.0',
     },
   },
+  transform: jsonSchemaTransform,
 })
 
 app.register(fSwaggerUI, { routePrefix: '/documentation' })
@@ -37,6 +35,7 @@ app.addHook('preHandler', (req, res, next) => {
   req.jwt = app.jwt
   return next()
 })
+
 app.decorate('authenticate', async (req: FastifyRequest, reply: FastifyReply) => {
   const token = req.cookies.access_token
   if (!token) {
@@ -47,11 +46,12 @@ app.decorate('authenticate', async (req: FastifyRequest, reply: FastifyReply) =>
   req.user = decoded
 })
 
+app.setValidatorCompiler(validatorCompiler)
+app.setSerializerCompiler(serializerCompiler)
+
 // cookies
-app.register(fCookie, {
-  secret: 'some-secret-key',
-  hook: 'preHandler',
-})
+app.register(fCookie, { secret: 'some-secret-key', hook: 'preHandler' })
+
 app.get('/healthcheck', (req, res) => {
   res.send({ message: 'Success' })
 })
