@@ -26,7 +26,7 @@ model Transaction {
   userId       String
   timestamp    DateTime @default(now())
   mcc          Int
-  amount       Decimal
+  amount       Float
   currencyCode Int
   comment      String?
 }
